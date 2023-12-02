@@ -1,20 +1,15 @@
-# azure.py
-# Import necessary libraries
 import streamlit as st
-import openai
-import os
-# A comment
-# Set up your OpenAI API key
-openai.api_key = os.environ.get('OPENAI_API_KEY')
-# Initialize Streamlit
-st.title("This is such an awesome app!")
-# Create a text input field for user queries
-user_input = st.text_input("Ask a question:")
-# Send the user's query to OpenAI GPT-3
-if user_input:
-    response = openai.Completion.create(
-    engine="text-davinci-003",
-    prompt=user_input,
-    max_tokens=50
-    )
-    st.write(response['choices'][0]['text'].strip())
+from audiorecorder import audiorecorder
+
+st.title("Audio Recorder")
+audio = audiorecorder("Click to record", "Click to stop recording")
+
+if not audio.empty():
+    # To play audio in frontend:
+    st.audio(audio.export().read())  
+
+    # To save audio to a file, use pydub export method:
+    audio.export("audio.wav", format="wav")
+
+    # To get audio properties, use pydub AudioSegment properties:
+    st.write(f"Frame rate: {audio.frame_rate}, Frame width: {audio.frame_width}, Duration: {audio.duration_seconds} seconds")
